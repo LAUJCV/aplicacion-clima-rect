@@ -7,6 +7,7 @@ export const WeatherApp = () => {
 
   const [city, setCity] = useState('')
   const [weatherData, setWeatherData] = useState(null)
+  const [error, setError] = useState('')
 
   const urlBase = 'https://api.openweathermap.org/data/2.5/weather'
   const API_KEY = 'd239b2633da2ee617128264335cebd3c'
@@ -14,10 +15,24 @@ export const WeatherApp = () => {
 
   const fetchWeatherData = async () => {
     try {
+      if(!city.trim()) {
+        setError('Por favor, ingrese una ciudad')
+        window.alert("Por favor, ingrese una ciudad")
+        return
+      }
+
       const response = await fetch(`${urlBase}?q=${city}&appid=${API_KEY}&lang=es`)
       const data = await response.json()
       setWeatherData(data)
 
+      if (data.cod == 404){
+        setError("Ingrese una ciudad válida")
+        window.alert("Ingrese una ciudad válida")
+        setWeatherData(null)
+      } else{
+        setWeatherData(data)
+        setError('')
+      }
     } catch (error) {
       console.error('Ha ocurrido un error: ', error)
 
@@ -31,6 +46,7 @@ export const WeatherApp = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     fetchWeatherData();
+
   }
 
 
